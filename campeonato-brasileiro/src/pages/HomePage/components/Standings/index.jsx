@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Container, Table } from 'react-bootstrap';
-import { teams } from '../../../../mocks/mockData';
+// import { teams } from '../../../../mocks/mockData'; // Comentado para usar dados da API
+import { getAllTeams } from '../../../../services/footballService.js'; // Importe a função para buscar times da API
 import './style.css';
 
 const calculatePoints = (vitorias, empates) => {
@@ -7,6 +9,21 @@ const calculatePoints = (vitorias, empates) => {
 };
 
 const Standings = () => {
+  const [teams, setTeams] = useState([]);
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const data = await getAllTeams();
+        setTeams(data);
+      } catch (error) {
+        console.error("Erro ao buscar times:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
   return (
     <Container>
       <h2 className="text-center mb-3">Classificação</h2>
@@ -26,6 +43,15 @@ const Standings = () => {
               <td>{calculatePoints(team.vitorias, team.empates)}</td>
             </tr>
           ))}
+          {/* Dados mockados para referência
+          {teams.map((team, index) => (
+            <tr key={team.id}>
+              <td>{index + 1}</td>
+              <td>{team.nome}</td>
+              <td>{calculatePoints(team.vitorias, team.empates)}</td>
+            </tr>
+          ))}
+          */}
         </tbody>
       </Table>
     </Container>
